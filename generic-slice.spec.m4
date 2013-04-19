@@ -75,6 +75,8 @@ fi
 touch /etc/mlab/slice.installed
 
 %preun
+chkconfig --del slicectrl
+service slicectrl stop
 
 %postun
 
