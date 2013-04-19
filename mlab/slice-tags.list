@@ -6,6 +6,7 @@
 #19.08.2010-2.mlab   https://github.com/m-lab-tools/glasnost-support.git mpisws_broadband
 #1.0-3.mlab          https://github.com/m-lab-tools/pipeline-support.git mlab_pipeline
 #0.4.15.7-2.mlab     https://github.com/m-lab-tools/neubot-support.git mlab_neubot
-3.6.5.1.pre2-12.mlab  https://github.com/stephen-soltesz/ndt-support.git iupui_ndt
+3.6.5.2-8.mlab https://github.com/m-lab-tools/ndt-support.git iupui_ndt
+# 3.6.5.1.pre2-12.mlab  https://github.com/stephen-soltesz/ndt-support.git iupui_ndt
 #mlab_ops
 #mlab_ooni
