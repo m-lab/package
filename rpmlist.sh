@@ -30,7 +30,7 @@ function format () {
         if test -L $file ; then
             echo "/home/$slice/$file"
         elif test -f $file ; then
-            format="%%attr(%a,root,root) /home/$slice/%n"
+            format="%%attr(%a,$slice,slices) /home/$slice/%n"
             stat -c"$format" $file | sed -e 's|\./||g' 
         else
             echo "unknown file type: $file" >&2
