@@ -20,6 +20,8 @@ function format () {
     if [[ $ftype =~ "install" ]] ; then
         if test -L $file ; then
             echo "ln -s $( readlink -f $file ) %{buildroot}/'home/$slice/$file'"
+        elif test -d $file ; then
+            echo "mkdir -p $file"
         elif test -f $file ; then
             format="install -D -m %a '%n'	%%{buildroot}/'home/$slice/%n'"
             stat -c"$format" $file | sed -e 's|\./||g' 
@@ -29,6 +31,9 @@ function format () {
     elif [[ $ftype =~ "files" ]] ; then
         if test -L $file ; then
             echo "/home/$slice/$file"
+        elif test -d $file ; then
+            # NOTE: don't take explicit ownership of any directories
+            echo -n "" 
         elif test -f $file ; then
             format="%%attr(%a,$slice,slices) /home/$slice/%n"
             stat -c"$format" $file | sed -e 's|\./||g' 
@@ -60,6 +65,13 @@ function filelist () {
             while read file ; do
                  format $slice $ftype $file
             done 
+    # NOTE: guarantee that dirs come before links 
+    find ./ -path ".*swp" -prune -o \
+            -path '*/.svn*' -prune -o \
+            -type d -a -print | sed -e 's|\./||g' | \
+            while read file ; do
+                format $slice $ftype $file
+            done
     # NOTE: guarantee that links come AFTER the actual files above
     # NOTE: if a link is ordered before the actual file, the rpm build fails.
     find ./ -path ".*swp" -prune -o \
