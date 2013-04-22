@@ -17,6 +17,9 @@ function format () {
     slice=$1
     ftype=$2
     file=$3
+    if [ -z "$file" ] ; then 
+        return 0
+    fi
     if [[ $ftype =~ "install" ]] ; then
         if test -L $file ; then
             echo "ln -s $( readlink -f $file ) %{buildroot}/'home/$slice/$file'"
