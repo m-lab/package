@@ -52,14 +52,14 @@ $PACKAGE_DIR/rpmlist.sh install $SLICENAME > $rpminstall_list
 $PACKAGE_DIR/rpmlist.sh files $SLICENAME > $rpmfiles_list
 
 slicetag=$( $PACKAGE_DIR/slicetag.sh get )
-rpmversion="-DVERSION="$( echo $slicetag | awk -F- '{print $1}' )
-rpmtag="-DTAG="$( echo $slicetag | awk -F- '{print $2}' )
+rpmversion="-DRPMVERSION="$( echo $slicetag | awk -F- '{print $1}' )
+rpmtag="-DRPMTAG="$( echo $slicetag | awk -F- '{print $2}' )
 # TODO: maybe set this conditionally.
-date="-DDATE="$(date +%Y%m%dT%H00)
+date="-DRPMDATE="$(date +%Y%m%dT%H00)
 date=
 
 # NOTE: writes to stdout
-m4 -DSLICE=$SLICENAME \
+m4 -DRPMSLICE=$SLICENAME \
    -DSLICEinstall=$rpminstall_list \
    -DSLICEfiles=$rpmfiles_list \
    ${rpmversion} \

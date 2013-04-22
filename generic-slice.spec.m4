@@ -3,11 +3,11 @@
 #
 %define url $URL:$
 
-%define name SLICE
-%define version VERSION
-%define taglevel TAG
-ifdef(`DATE',
-%define date DATE
+%define name RPMSLICE
+%define version RPMVERSION
+%define taglevel RPMTAG
+ifdef(`RPMDATE',
+%define date RPMDATE
 )
 
 %define releasetag %{taglevel}%{?date:.%{date}}
