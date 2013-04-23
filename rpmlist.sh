@@ -69,12 +69,12 @@ function filelist () {
                  format $slice $ftype $file
             done 
     # NOTE: guarantee that dirs come before links 
-    find ./ -path ".*swp" -prune -o \
-            -path '*/.svn*' -prune -o \
-            -type d -a -print | sed -e 's|\./||g' | \
-            while read file ; do
-                format $slice $ftype $file
-            done
+    #find ./ -path ".*swp" -prune -o \
+    #        -path '*/.svn*' -prune -o \
+    #        -type d -a -print | sed -e 's|\./||g' | \
+    #        while read file ; do
+    #            format $slice $ftype $file
+    #        done
     # NOTE: guarantee that links come AFTER the actual files above
     # NOTE: if a link is ordered before the actual file, the rpm build fails.
     find ./ -path ".*swp" -prune -o \
