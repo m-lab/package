@@ -33,7 +33,7 @@ function format () {
         fi
     elif [[ $ftype =~ "files" ]] ; then
         if test -L $file ; then
-            echo "/home/$slice/$file"
+            echo "%attr(-,$slice,slices) /home/$slice/$file"
         elif test -d $file ; then
             # NOTE: don't take explicit ownership of any directories
             echo -n "" 

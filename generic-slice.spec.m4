@@ -56,7 +56,7 @@ dnl syscmd(`./rpmlist.sh list 'SLICE` install')
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root)
+%defattr(-,RPMSLICE,slices)
 include(SLICEfiles)
 dnl syscmd(`./rpmlist.sh list 'SLICE` files')
 
