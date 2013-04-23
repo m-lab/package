@@ -24,8 +24,8 @@ function format () {
         if test -L $file ; then
             echo "ln -s $( readlink -f $file ) %{buildroot}/'home/$slice/$file'"
         elif test -d $file ; then
-            #echo "mkdir -p $file"
-            echo -n ""
+            #echo -n ""
+            echo "mkdir -p $file"
         elif test -f $file ; then
             format="install -D -m %a '%n'	%%{buildroot}/'home/$slice/%n'"
             stat -c"$format" $file | sed -e 's|\./||g' 
