@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -e /vsys/slice_restart.out ] ; then
+    cat /vsys/slice_restart.out &
+    echo "1" > /vsys/slice_restart.in
+else
+    echo "Error: /vsys/slice_restart.out missing."
+    echo "Please report this to support@measurementlab.net"
+fi

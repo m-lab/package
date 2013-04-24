@@ -1,0 +1,113 @@
+#!/bin/bash
+
+set -x
+set -e
+
+source /etc/mlab/slice-functions
+
+function setup_crond () {
+    # ENABLE CROND
+    /sbin/chkconfig rsyslog on
+    l=$( pgrep -f rsyslogd | wc -l )
+    if [ $l -eq 0 ] ; then
+        service rsyslog start 
+    fi
+    /sbin/chkconfig crond on
+    l=$( pgrep -f crond | wc -l )
+    if [ $l -eq 0 ] ; then
+        # START CROND IF IT IS NOT RUNNING
+        cat <<EOF > /usr/bin/logmessages.sh
+#!/bin/bash
+cat >> /var/log/cron.output
+EOF
+        chmod 755 /usr/bin/logmessages.sh
+        cat <<EOF > /etc/logrotate.d/cronoutput
+/var/log/cron.output {
+    copytruncate
+    compress
+    monthly
+    notifempty
+    rotate 5
+    missingok
+}
+EOF
+        echo "CRONDARGS='-m /usr/bin/logmessages.sh'" > /etc/sysconfig/crond
+        /sbin/service crond start
+    fi
+    return 0
+}
+
+function setup_rsync () {
+    slicename=$1
+    # TODO: enable this once collection pipeline is updated.
+    # TODO: remove legacy support
+    #if has_private_ip ; then
+    #    port=7999
+    #else
+    #    port=`python -c "print 7999+sum([ ord(c) for c in '$slicename' ])"`
+    #fi
+
+    RSYNCFILE=/etc/rsyncd.conf
+    rm -f $RSYNCFILE
+    ADDRESS=$( get_slice_ipv4 )
+    cat <<EOF >> $RSYNCFILE
+# TEMPLATE
+# for pid file, do not use /var/run/rsync.pid if
+# you are going to run rsync out of the init.d script.
+pid file=/var/run/rsyncd.pid
+port=7999
+address=$ADDRESS
+EOF
+    # NOTE: the new style uses slicename everywhere.
+    sed -e 's/SLICENAME/'$SLICENAME'/g' \
+        -e 's/PORT/'$PORT'/g' \
+        -e 's/MODULENAME/'$SLICENAME'/g' \
+        -e 's/DIRNAME/'$SLICENAME'/g' /etc/mlab/rsyncd.conf.m4 >> $RSYNCFILE
+
+    if grep -q $SLICENAME /etc/mlab/rsyncd.legacy ; then
+
+        grep $SLICENAME /etc/mlab/rsyncd.legacy | \
+        while read SLICE PORT MODULE ; do
+            # NOTE: header for rsync file.
+            cat <<EOF >> $RSYNCFILE
+# TEMPLATE
+# for pid file, do not use /var/run/rsync.pid if
+# you are going to run rsync out of the init.d script.
+pid file=/var/run/rsyncd.pid
+port=$PORT
+EOF
+            # use a special DIRNAME for npad
+            DIRNAME=$SLICENAME
+            if [[ $SLICENAME =~ "iupui_npad" ]] ; then
+                DIRNAME="$SLICENAME/$MODULE"
+            fi
+
+            # NOTE: use the 'legacy' module name
+            # TODO: remove this line after data pipeline is updated.
+            sed -e 's|SLICENAME|'$SLICENAME'|g' \
+                -e 's|PORT|'$PORT'|g' \
+                -e 's|MODULENAME|'$MODULE'|g' \
+                -e 's|DIRNAME|'$DIRNAME'|g' /etc/mlab/rsyncd.conf.m4 >> $RSYNCFILE
+        done
+    fi
+
+    mkdir -p /var/spool/$slicename
+    chown -R $slicename:slices /var/spool/$slicename
+
+    /sbin/chkconfig rsyncd on
+    service rsyncd start
+    return 0
+}
+
+setup_crond
+setup_rsync $SLICENAME
+
+/sbin/chkconfig slicectrl on
+mkdir -p /var/run/$SLICENAME
+chown $SLICENAME:slices /opt/slice/
+
+# NOTE: disable this due to errors from 'slicepkg.py unpack' with symlinks
+# NOTE: change /home/$SLICENAME into a link to /opt/slice/$SLICENAME
+# This will allow user-privileged management of package updates.
+#mv /home/$SLICENAME /opt/slice/current
+#ln -s /opt/slice/current /home/$SLICENAME

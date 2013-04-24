@@ -36,6 +36,8 @@ SLICEFILES=$(shell find /home/$(SLICENAME) -type f -a -print | grep -v .tar.bz2 
 
 # NOTE: this make the tar file dependent on all files 
 $(TARFILE): $(PKGDIR) $(FILES)
+	# NOTE: copy slicebase files into pkg dir
+	rsync -ar $(SOURCE_DIR)/package/slicebase $(PKGDIR)/
 	rsync -ar --exclude ".svn" $(BUILD_DIR)/ $(PKGDIR)/
 	tar --exclude ".svn" --exclude ".*.swp" --exclude "*.tar" \
 		-cvf $(TARFILE) -C $(TMPBUILD) $(PKGNAME)

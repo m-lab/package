@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# chkconfig: 2345 80 20
+### BEGIN INIT INFO
+# Provides:          slicectrl
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Control M-Lab slices
+# Description:       SliceCTRL is a management stub for stream-lining 
+#                    the tasks for M-Lab slice management.
+### END INIT INFO
+
+COMMAND="$1"
+shift
+
+source /etc/mlab/slicectrl-functions
+
+PATH=$PATH:/sbin:/bin:/usr/sbin:/usr/bin
+
+function status () {
+    status_slice
+}
+
+case $COMMAND in
+    initialize)
+        initialize_slice
+    ;;
+    start)
+        start_slice
+    ;;
+    stop)
+        stop_slice
+    ;;
+    status)
+        status
+    ;;
+    restart)
+        stop_slice
+        start_slice
+    ;;
+    verify)
+        if rpm -V $SLICENAME ; then 
+            echo "Verify Install: PASSED"
+        else
+            # NOTE: rpm will print more details.
+            echo "Verify Install: FAILED"
+        fi
+    ;;
+    update)
+        /usr/bin/slice-update
+    ;;
+    restart|reboot)
+        /usr/bin/slice-restart
+    ;;
+    cleandisk)
+        # TODO: implement safe-delete of files in $SLICERSYNCDIR
+        echo "TODO: implement cleandisk"
+    ;;
+esac

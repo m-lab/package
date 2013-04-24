@@ -1,0 +1,95 @@
+#!/bin/bash
+
+source /etc/mlab/slice-functions
+
+function find_and_exec_slice () {
+    local file=$1
+    # NOTE: if no files are modified 'rpm' prints nothing and returns 0.
+    # NOTE: otherwise non-zero and prints status.
+    if test -f $SLICEBASE/skip-verify || rpm -V $SLICENAME ; then 
+        if [ -f $SLICEHOME/init/$file.sh ] ; then
+            cd $SLICEHOME
+            if $SLICEHOME/init/$file.sh ; then
+                return 0
+            fi 
+            echo "Error: error running $file.sh"
+            return 1
+        fi
+        # NOTE: a missing script is not an error.
+        return 0
+    fi
+    echo "Error: $SLICENAME files have been modified!"
+    return 1
+}
+
+function find_and_exec_root () {
+    local file=$1
+    if [ -x $SLICEBASE/init/$file ] ; then
+        $SLICEBASE/init/$file || ( \
+            echo "Error: stopping due to error in $file" && exit 1 )
+    fi
+}
+
+function start_before_everything () {
+    pgrep -f ".*" > /var/run/$SLICENAME/pids.beforestart
+}
+
+function stop_after_everything () {
+    KILLED=$( kill_remaining TERM )
+    if [ -n "$KILLED" ] ; then
+        sleep 3
+        KILLED=$( kill_remaining KILL )
+    fi
+}
+
+function kill_remaining () {
+    local signal=$1
+    KILLED=
+    pgrep -v -f "slicectrl|rsync|rpm" > /var/run/$SLICENAME/pids.afterstop
+    if [ -f /var/run/$SLICENAME/pids.beforestart ] ; then
+        for pid in `comm -23 <( sort /var/run/$SLICENAME/pids.afterstop ) \
+                             <( sort /var/run/$SLICENAME/pids.beforestart )`; do 
+            echo "STILL RUNNING: " `ps ax | grep $pid`
+            kill -$signal $pid
+            KILLED="TRUE"
+        done
+    fi
+    echo $KILLED
+}
+
+function initialize_slice () {
+    if find_and_exec_slice initialize ; then
+        touch /etc/mlab/sliceinit.ok
+        echo "Initialize: OK"
+        return 0
+    fi
+    echo "Initialize: FAILED"
+    return 1
+}
+
+function start_slice () {
+    if [ ! -f /etc/mlab/sliceinit.ok ] ; then 
+        echo "Initialize incomplete. Trying..."
+        initialize_slice || return 1
+    fi
+
+    start_before_everything
+    if find_and_exec_slice start ; then 
+        echo "Start: OK"
+        return 0
+    fi
+    echo "Start: FAILED"
+    echo "Killing any processes started"
+    stop_slice
+    return 1
+}
+
+function stop_slice () {
+    find_and_exec_slice stop
+    stop_after_everything
+}
+
+function status_slice () {
+    echo "slice status.."
+    find_and_exec_slice status
+}
