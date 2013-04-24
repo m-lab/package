@@ -65,7 +65,7 @@ m4 -DRPMSLICE=$SLICENAME \
    ${rpmversion} \
    ${rpmtag}  \
    ${date} \
-   $PACKAGE_DIR/generic-slice.spec.m4 
+   $PACKAGE_DIR/generic-slice.m4.spec
 
 # clean up
 rm -f $rpminstall_list

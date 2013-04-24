@@ -64,14 +64,18 @@ install -D -m 0755 slicebase/etc/init.d/rsyncd    $RPM_BUILD_ROOT/etc/init.d/rsy
 install -D -m 0755 slicebase/bin/slice-update     $RPM_BUILD_ROOT/usr/bin/slice-update
 install -D -m 0755 slicebase/bin/slice-restart    $RPM_BUILD_ROOT/usr/bin/slice-restart
 
+# NOTE: this is an m4 macro 
 include(SLICEinstall)
-dnl syscmd(`./rpmlist.sh list 'SLICE` install')
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
+# NOTE: default permissions are user:'slicename' group:slices
+# NOTE: this is the default for PlanetLab-based VMs.
+
 %defattr(-,RPMSLICE,slices)
+# NOTE: these are slicebase files.
 /opt/slice
 %attr(0644,root,root) /etc/mlab/slice-functions
 %attr(0644,root,root) /etc/mlab/slicectrl-functions
@@ -83,30 +87,32 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) /usr/bin/slice-update
 %attr(0755,root,root) /usr/bin/slice-restart
 
+# NOTE: this is an m4 macro to include extra files
 include(SLICEfiles)
-dnl syscmd(`./rpmlist.sh list 'SLICE` files')
 
 %pre
 if test -f /etc/mlab/slice.installed ; then
     # NOTE: if the file exists, then %post was run at some time in the past.
-    #       from an earlier version of this package.  which means this is an 
-    #       update, which means we should shutdown the slice and recreate it.
-    # TODO: stop experiment with slicectrl
-    # TODO: make sure slice-update waits until the data collection pipeline is done
+    #       i.e. from an earlier version of this package.  which means this 
+    #       is an update, which means we should shutdown the slice and recreate 
+    #       it.
     /usr/bin/slice-update
+    # NOTE: refuse to do anything else.
     exit -1
 fi
 
 %post
-# run post-install script to enable services and setup 
-# environment-dependent settings.
+# NOTE: run post-install script to enable services and setup 
+#       environment-dependent settings.
 if [ -x /etc/mlab/init/post-init ] ; then
     /etc/mlab/init/post-init
 fi
+
 # NOTE: leave a bread-crumb to indicate that the package was installed.
 touch /etc/mlab/slice.installed
 
 %preun
+# NOTE: stop experiment with slicectrl
 chkconfig --del rsyncd
 service rsyncd stop
 chkconfig --del slicectrl
