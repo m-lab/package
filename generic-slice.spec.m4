@@ -49,6 +49,22 @@ M-lab.
 %build
 
 %install
+mkdir -p $RPM_BUILD_ROOT/opt/slice/
+
+install -D -m 0644 slicebase/etc/mlab/slicectrl-functions  $RPM_BUILD_ROOT/etc/mlab/slicectrl-functions
+install -D -m 0644 slicebase/etc/mlab/slice-functions      $RPM_BUILD_ROOT/etc/mlab/slice-functions
+install -D -m 0644 slicebase/etc/mlab/rsyncd.conf.in       $RPM_BUILD_ROOT/etc/mlab/rsyncd.conf.in
+install -D -m 0644 slicebase/etc/mlab/rsyncd.conf.m4       $RPM_BUILD_ROOT/etc/mlab/rsyncd.conf.m4
+install -D -m 0644 slicebase/etc/mlab/rsyncd.legacy        $RPM_BUILD_ROOT/etc/mlab/rsyncd.legacy 
+
+install -D -m 0755 slicebase/init/post-init       $RPM_BUILD_ROOT/etc/mlab/init/post-init
+
+install -D -m 0755 slicebase/etc/init.d/slicectrl $RPM_BUILD_ROOT/etc/init.d/slicectrl
+install -D -m 0755 slicebase/etc/init.d/rsyncd    $RPM_BUILD_ROOT/etc/init.d/rsyncd
+
+install -D -m 0755 slicebase/bin/slice-update     $RPM_BUILD_ROOT/usr/bin/slice-update
+install -D -m 0755 slicebase/bin/slice-restart    $RPM_BUILD_ROOT/usr/bin/slice-restart
+
 include(SLICEinstall)
 dnl syscmd(`./rpmlist.sh list 'SLICE` install')
 
@@ -57,6 +73,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,RPMSLICE,slices)
+%attr(0644,root,root) /etc/mlab/slice-functions
+%attr(0644,root,root) /etc/mlab/slicectrl-functions
+%attr(0644,root,root) /etc/mlab/rsyncd.conf.m4
+%attr(0644,root,root) /etc/mlab/rsyncd.legacy
+%attr(0755,root,root) /etc/mlab/init/post-init
+%attr(0755,root,root) /etc/init.d/slicectrl 
+%attr(0755,root,root) /etc/init.d/rsyncd 
+%attr(0755,root,root) /usr/bin/slice-update
+%attr(0755,root,root) /usr/bin/slice-restart
+
 include(SLICEfiles)
 dnl syscmd(`./rpmlist.sh list 'SLICE` files')
 
@@ -71,15 +97,22 @@ if test -f /etc/mlab/slice.installed ; then
 fi
 
 %post
+# run post-install script to enable services and setup 
+# environment-dependent settings.
+if [ -x /etc/mlab/init/post-init ] ; then
+    /etc/mlab/init/post-init
+fi
 # NOTE: leave a bread-crumb to indicate that the package was installed.
 touch /etc/mlab/slice.installed
 
 %preun
+chkconfig --del rsyncd
+service rsyncd stop
 chkconfig --del slicectrl
 service slicectrl stop
 
 %postun
 
 %changelog
-* Fri Mar 08 2013 Stephen Soltesz <soltesz@opentechinstitute.org> slicebase-0.2-1
-- adds call to initialize, with many return status checks through-out
+* Fri Apr 24 2013 Stephen Soltesz <soltesz@opentechinstitute.org> slicebase-0.x.x
+- merge slicebase within generic slice spec wrapper

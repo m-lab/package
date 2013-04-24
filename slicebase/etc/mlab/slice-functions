@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# SETUP FUNCTIONS
+function assert_sanity_checks () {
+    # SANITY CHECKS AND ENVIRONMENT SETUP
+    local given_slicename=$1
+
+    # check default permission mask
+    m=$( umask )
+    if [ $m = "0000" ] ; then
+        echo "Please set umask to a sensible default: i.e. umask 0022"
+        exit 1
+    fi
+
+    # check for root user
+    if [ $UID -ne "0" ] ; then
+       echo "You must run this program with root permissions..."
+       exit 1
+    fi
+
+    if ! enough_disk_space ; then
+        echo "There is not enough disk space to continue!"
+        exit 1
+    fi
+}
+
+function enough_disk_space () {
+    blocks_available=$( df | grep dev | awk '{print $4}' )
+    if [ $blocks_available -gt 10240 ] ; then
+        # at least 10MB are available.
+        return 0
+    fi
+    return 1
+}
+
+function assert_dir () {
+    local dir=$1
+    /usr/bin/test -d $dir || ( 
+            echo "ERROR: No $dir!" && exit 1 )
+}
+
+function install_file () {
+    src=$1
+    dst=$2
+    if [ -f $src ] ; then
+        cp -f $src $dst
+        return $?
+    fi
+    return 1
+}
+
+function get_slice_ipv4() {
+	## NOTE: this call should call out to vsys to get an authoritative list of
+	## IPs assigned to this slice in /etc/vservers/interfaces/*/addr
+	IP=`/sbin/ip -o -f inet addr show | grep eth | awk '{print $4}' | sed -e 's/\/26//g' | sort | head -1`
+	echo $IP
+}
+
+function get_slice_ipv6() {
+	IP=`/sbin/ip -o -f inet6 addr show  | awk '{print $4}' | sed -e 's/\/64//g' | sort | head -1`
+	echo $IP
+}
+
+function has_private_ip() {
+    l=`ifconfig | grep eth0 | wc -l`
+    if [ $l -gt 1 ] ; then
+        return 0
+    elif [ $l -eq 1 ] ; then
+        return 0
+    else
+        echo "HAS NO IP!"
+        return 1
+    fi
+}
+
+function get_site_name() {
+	SITE=$( hostname | tr 'a-z' 'A-Z' | awk -F. '{print $2}' )
+	echo $SITE
+}
+
+function get_slice_home_dir () {
+    echo /home/$SLICENAME
+}
+
+function get_slice_name() {
+	## NOTE: this will fail when there are other users in group 'slices'
+	slice_gid=$( grep slices: /etc/group | sed -e 's/slices:x//g' )
+	slicename=$( grep $slice_gid /etc/passwd | awk -F: '{print $1}' )
+	echo $slicename
+}
+
+SLICEBASE=/etc/mlab
+SLICENAME=$( get_slice_name )
+SLICEHOME=$( get_slice_home_dir )
+SLICERSYNCDIR=/var/spool/$SLICENAME
