@@ -53,7 +53,6 @@ mkdir -p $RPM_BUILD_ROOT/opt/slice/
 
 install -D -m 0644 slicebase/etc/mlab/slicectrl-functions  $RPM_BUILD_ROOT/etc/mlab/slicectrl-functions
 install -D -m 0644 slicebase/etc/mlab/slice-functions      $RPM_BUILD_ROOT/etc/mlab/slice-functions
-install -D -m 0644 slicebase/etc/mlab/rsyncd.conf.in       $RPM_BUILD_ROOT/etc/mlab/rsyncd.conf.in
 install -D -m 0644 slicebase/etc/mlab/rsyncd.conf.m4       $RPM_BUILD_ROOT/etc/mlab/rsyncd.conf.m4
 install -D -m 0644 slicebase/etc/mlab/rsyncd.legacy        $RPM_BUILD_ROOT/etc/mlab/rsyncd.legacy 
 
