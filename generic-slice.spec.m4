@@ -94,6 +94,7 @@ if test -f /etc/mlab/slice.installed ; then
     # TODO: stop experiment with slicectrl
     # TODO: make sure slice-update waits until the data collection pipeline is done
     /usr/bin/slice-update
+    exit -1
 fi
 
 %post
