@@ -100,6 +100,15 @@ if test -f /etc/mlab/slice.installed ; then
     # NOTE: refuse to do anything else.
     exit -1
 fi
+# NOTE: check for slicename-as-user and slices-as-group
+# NOTE: if not present, create them.
+if ! grep -qE "^%{name}:" /etc/group ; then
+    /usr/sbin/groupadd slices
+fi
+if ! id -u %{name} > /dev/null ; then
+    /usr/sbin/adduser -g slices %{name}
+fi
+
 
 %post
 # NOTE: run post-install script to enable services and setup 
