@@ -29,7 +29,7 @@ Release: %{releasetag}
 # this is for centos6 only, package names change for future distros.
 Requires: cronie
 Requires: crontabs
-#Requires: slicebase
+Requires: yum-cron
 
 License: Apache License
 Group: System Environment/Base
