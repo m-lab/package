@@ -29,7 +29,7 @@ Release: %{releasetag}
 # this is for centos6 only, package names change for future distros.
 Requires: cronie
 Requires: crontabs
-Requires: slicebase
+#Requires: slicebase
 
 License: Apache License
 Group: System Environment/Base
@@ -72,6 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,RPMSLICE,slices)
+/opt/slice
 %attr(0644,root,root) /etc/mlab/slice-functions
 %attr(0644,root,root) /etc/mlab/slicectrl-functions
 %attr(0644,root,root) /etc/mlab/rsyncd.conf.m4
