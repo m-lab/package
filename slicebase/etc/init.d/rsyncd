@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# runlevels start stop
+# chkconfig: 2345 78 22
+### BEGIN INIT INFO
+# Provides:          rsyncd
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: manages rsyncd for slice data collection
+# Description:       creates an init.d service for rsyncd 
+### END INIT INFO
+
+COMMAND="$1"
+shift
+
+PATH=$PATH:/sbin:/bin:/usr/sbin:/usr/bin
+function stop_rsync () {
+    killall -q rsync || :
+}
+function start_rsync () {
+    if [ ! -f /etc/rsyncd.conf ] ; then
+        echo "Could not find /etc/rsyncd.conf"
+        exit 1
+    fi
+    rsync --daemon --config=/etc/rsyncd.conf --verbose
+}
+
+case $COMMAND in
+    start)
+        start_rsync
+    ;;
+    stop)
+        stop_rsync
+    ;;
+    restart)
+        stop_rsync
+        sleep 1
+        start_rsync
+    ;;
+    status)
+        if pgrep -f rsync > /dev/null ; then
+            echo "rsync is running"
+        else
+            echo "rsync is NOT running"
+        fi
+    ;;
+    *)
+        echo "Supported commands are: {start|stop|restart|status}"
+        exit 1
+    ;;
+esac

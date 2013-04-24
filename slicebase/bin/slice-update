@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -e /vsys/slice_update.out ] ; then
+    cat /vsys/slice_update.out &
+    echo "1" > /vsys/slice_update.in
+else
+    echo "Error: /vsys/slice_update.out missing."
+    echo "Please report this to support@measurementlab.net"
+fi
