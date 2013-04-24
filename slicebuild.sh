@@ -5,16 +5,21 @@ set -e
 if [ -z "$1" ] ; then
     echo "
 Usage: $0 <slicename>
-    For example: iupui_npad, mlab_neubot, etc.
-    HINT: for testing, you can use anything, i.e. foobar
+    slicename might be: iupui_npad, mlab_neubot, etc.
+    For testing, you can use any name, i.e. foobar
+
+By default, $0 uses two locations for sources and output:
+    SOURCE_DIR -- by default PWD.
+    BUILD_DIR  -- by default /home/$SLICENAME
+
+Both can be set from the environment.
 
 $0 performs all the steps needed to turn your experiment into an RPM package.
-   * checkout all the submodules for your slice.
-   * prepare the slice using provided 'prepare.sh'
+   * bootstraps the local repositories (if needed)
+   * prepares/builds the slice using provided 'prepare.sh'
    * collect the versions of all repositories
    * generates an rpm spec file
-   * builds the rpm from the spec file and output of earlier steps."
-
+   * and builds the rpm."
     exit 1
 fi
 
@@ -35,7 +40,10 @@ set -x
 $PACKAGE_DIR/bootstrap.sh 
 
 # NOTE: prepare will remove contents of $BUILD_DIR
-$SOURCE_DIR/init/prepare.sh
+mkdir -p $BUILD_DIR
+if test -f $SOURCE_DIR/init/prepare.sh ; then
+    $SOURCE_DIR/init/prepare.sh
+fi
 
 # TODO: make this better; handle svn, handle urls, parsable.
 $PACKAGE_DIR/sliceversion.sh > $BUILD_DIR/version
