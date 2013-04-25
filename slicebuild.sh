@@ -40,6 +40,7 @@ set -x
 $PACKAGE_DIR/bootstrap.sh 
 
 # NOTE: prepare will remove contents of $BUILD_DIR
+# TODO: enforce that $BUILD_DIR does not match $PWD or $HOME
 mkdir -p $BUILD_DIR
 if test -f $SOURCE_DIR/init/prepare.sh ; then
     $SOURCE_DIR/init/prepare.sh
