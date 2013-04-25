@@ -57,7 +57,7 @@ The experiment support repository should include at least one shell script:
 
     init/prepare.sh
 
-Please see additional notes on `prepare.sh` here: [add link][1]
+Please see the templates and comments in [prepare.sh][1].
 
 Once this is in place, you can build your package using:
     
@@ -76,4 +76,4 @@ However you can override them using environment variable.  Specifically:
     RPMBUILD -- the output of slicebuild.sh, default $PWD/build/
     TMPBUILD -- temporary output during rpm build, default $PWD/build/tmp
 
-  [1]: https://github.com/m-lab-tools/example-support
+  [1]: https://github.com/m-lab-tools/package/blob/master/templates/prepare.sh
