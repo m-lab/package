@@ -1,4 +1,3 @@
-
 SLICENAME?=notset
 ifeq ($(SLICENAME),notset)
     $(error 'SLICENAME' is a required variable. Please set it to the name of your slice.)
@@ -32,7 +31,7 @@ $(PKGDIR):
 	mkdir -p $(PKGDIR)
 
 # NOTE: collect all files in the current directory
-SLICEFILES=$(shell find /home/$(SLICENAME) -type f -a -print | grep -v .tar.bz2 )
+SLICEFILES=$(shell find $(BUILD_DIR) -type f -a -print | grep -v .tar.bz2 )
 
 # NOTE: this make the tar file dependent on all files 
 $(TARFILE): $(PKGDIR) $(FILES)
