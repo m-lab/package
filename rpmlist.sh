@@ -3,15 +3,16 @@
 # NOTE: this script formats a list of files under /home/$slicename for the
 # %install and %files section of an RPM spec file.
 #
-# The script is invoked by generic-slice.spec.m4 when generating a slice's spec
-# file from a build directory under /home/<slicename>.
+# The script is invoked before using generic-slice.m4.spec to format a slice's 
+# spec file.
 # 
-# It does the right thing for files with special characters, spaces, and
-# symbolic links. 
+# Filenames and paths are quoted to try to do the right thing for files with 
+# special characters, spaces, and symbolic links. 
 # 
 # TODO: improvements are:
 #   - parameter of input directory. currently assumed /home/<slicename>
 #   - recognize non-root user/group names, possibly set to "<slicename>,slices"
+#   - directory support is incomplete.  rpm throws warnings about duplicate listings.
 
 function format () {
     slice=$1
@@ -24,7 +25,6 @@ function format () {
         if test -L $file ; then
             echo "ln -s $( readlink -f $file ) %{buildroot}/'home/$slice/$file'"
         elif test -d $file ; then
-            #echo -n ""
             echo "mkdir -p %{buildroot}/'home/$slice/$file'"
         elif test -f $file ; then
             format="install -D -m %a '%n'	%%{buildroot}/'home/$slice/%n'"
@@ -36,7 +36,7 @@ function format () {
         if test -L $file ; then
             echo "%attr(-,$slice,slices) /home/$slice/$file"
         elif test -d $file ; then
-            # NOTE: don't take explicit ownership of any directories
+            # NOTE: take explicit ownership of directories
             echo "%attr(-,$slice,slices) /home/$slice/$file"
         elif test -f $file ; then
             format="%%attr(%a,$slice,slices) /home/$slice/%n"
