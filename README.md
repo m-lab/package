@@ -91,4 +91,4 @@ To iterate and test your slice on M-Lab, your workflow would look like:
 
 Additional notes on the behavior of the slicebase system is [here][2].
 
-  [2]: http://github.com/m-lab-tools/package/slicebase/
+  [2]: https://github.com/m-lab-tools/package/tree/master/slicebase
