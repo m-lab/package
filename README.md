@@ -77,3 +77,18 @@ However you can override them using environment variable.  Specifically:
     TMPBUILD -- temporary output during rpm build, default $PWD/build/tmp
 
   [1]: https://github.com/m-lab-tools/package/blob/master/templates/prepare.sh
+  
+Development
+-----------
+
+To iterate and test your slice on M-Lab, your workflow would look like:
+
+  * Fork or clone your slice-support repository
+  * Update init/* scripts or references to submodules
+  * Build your package using `./package/slicebuild.sh`
+  * Copy and install your package version to an M-Lab or PlanetLab node.
+  * Install it and check for correct behavior.
+
+Additional notes on the behavior of the slicebase system is [here][2].
+
+  [2]: http://github.com/m-lab-tools/package/slicebase/
