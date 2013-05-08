@@ -89,6 +89,28 @@ To iterate and test your slice on M-Lab, your workflow would look like:
   * Copy and install your package version to an M-Lab or PlanetLab node.
   * Install it and check for correct behavior.
 
+If you are developing *INSIDE A SLICE*, then you need to make some special
+accommodations:
+
+  * First, choose two machines, one for development one for deployment testing.
+  * On the first:
+    - create a new user:
+      * adduser <devfoo> 
+    - checkout the appropriate support repo:
+      * git clone --recursive https://github.com/m-lab-tools/example-support
+    - build it using your slicename:
+      * ./package/slicebuild.sh <slicename>
+    - copy the resulting package to the second machine.
+  * On the second:
+    - if this is an update, first run /usr/bin/slice-update. This will
+      recreate your slice so your install is over a pristine filesystem. 
+      (And, your ssh connection will be terminated because your slice and 
+      all processes will be killed. Just log back in after a few minutes.)
+    - install the rpm.
+    - observe whether your slice operates correctly.
+      * service slicectrl start
+      * service slicectrl stop
+
 Additional notes on the behavior of the slicebase system is [here][2].
 
   [2]: https://github.com/m-lab-tools/package/tree/master/slicebase
