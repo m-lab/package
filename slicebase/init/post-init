@@ -50,19 +50,6 @@ function setup_rsync () {
     RSYNCFILE=/etc/rsyncd.conf
     rm -f $RSYNCFILE
     ADDRESS=$( get_slice_ipv4 )
-    cat <<EOF >> $RSYNCFILE
-# TEMPLATE
-# for pid file, do not use /var/run/rsync.pid if
-# you are going to run rsync out of the init.d script.
-pid file=/var/run/rsyncd.pid
-port=7999
-address=$ADDRESS
-EOF
-    # NOTE: the new style uses slicename everywhere.
-    sed -e 's/SLICENAME/'$SLICENAME'/g' \
-        -e 's/PORT/'$PORT'/g' \
-        -e 's/MODULENAME/'$SLICENAME'/g' \
-        -e 's/DIRNAME/'$SLICENAME'/g' /etc/mlab/rsyncd.conf.m4 >> $RSYNCFILE
 
     if grep -q $SLICENAME /etc/mlab/rsyncd.legacy ; then
 
@@ -85,11 +72,24 @@ EOF
             # NOTE: use the 'legacy' module name
             # TODO: remove this line after data pipeline is updated.
             sed -e 's|SLICENAME|'$SLICENAME'|g' \
-                -e 's|PORT|'$PORT'|g' \
                 -e 's|MODULENAME|'$MODULE'|g' \
                 -e 's|DIRNAME|'$DIRNAME'|g' /etc/mlab/rsyncd.conf.m4 >> $RSYNCFILE
         done
     fi
+
+    cat <<EOF >> $RSYNCFILE
+# TEMPLATE
+# for pid file, do not use /var/run/rsync.pid if
+# you are going to run rsync out of the init.d script.
+pid file=/var/run/rsyncd.pid
+port=7999
+address=$ADDRESS
+EOF
+    # NOTE: the new style uses slicename everywhere.
+    sed -e 's/SLICENAME/'$SLICENAME'/g' \
+        -e 's/MODULENAME/'$SLICENAME'/g' \
+        -e 's/DIRNAME/'$SLICENAME'/g' /etc/mlab/rsyncd.conf.m4 >> $RSYNCFILE
+
 
     mkdir -p /var/spool/$slicename
     chown -R $slicename:slices /var/spool/$slicename
