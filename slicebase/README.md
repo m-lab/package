@@ -33,7 +33,7 @@ The following commands are available to users.
 
 * `slicebase/bin/slice-restart`
 
-   Simulates a restart. Except slice-restart applies only to the calling slice.
+   Simulates a restart. Slice-restart applies only to the calling slice.
    All slice processes are killed (including active SSH connections) and the
    slice is started again. System services are restarted via initscripts.
 
