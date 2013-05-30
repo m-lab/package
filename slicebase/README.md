@@ -11,7 +11,7 @@ available in the comments of each file.
 Support Scripts
 ---------------
 
-`slicebase/init/post-init`
+* `slicebase/init/post-init`
 
    Once the slice package is installed, `post-init` performs post installation
    setup.  In particular, it will:
@@ -22,9 +22,9 @@ Support Scripts
    * enable the `rsyncd` service using chkconfig.
    * enable the `slicectrl` service using chkconfig.
 
-`slicebase/mlab/slicectrl-functions`
+* `slicebase/mlab/slicectrl-functions`
 
-    `slicectrl-functions` provides all the support logic for `slicectrl`.
+   `slicectrl-functions` provides all the support logic for `slicectrl`.
 
 User Scripts and Commands
 -------------------------
