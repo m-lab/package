@@ -24,45 +24,45 @@ Support Scripts
 
 * `slicebase/mlab/slicectrl-functions`
 
-   `slicectrl-functions` provides all the support logic for `slicectrl`.
+   The `slicectrl` initscript uses `slicectrl-functions` for all support logic.
 
 User Scripts and Commands
 -------------------------
 
 The following commands are available to users.
 
-`slicebase/bin/slice-restart`
+* `slicebase/bin/slice-restart`
 
-    Simulates a restart. Except slice-restart applies only to the calling slice.
-    All slice processes are killed (including active SSH connections) and the
-    slice is started again. System services are restarted via initscripts.
+   Simulates a restart. Except slice-restart applies only to the calling slice.
+   All slice processes are killed (including active SSH connections) and the
+   slice is started again. System services are restarted via initscripts.
 
-`slicebase/bin/slice-update`
+* `slicebase/bin/slice-update`
 
-    Performs reinstallation.  Like restart, all processes are
-    killed. Next, for M-Lab managed slices, this means that the slice data
-    directory `$SLICERSYNCDIR` is preserved, then the filesystem deleted, a new
-    filesystem is created, the data directory restored, and the slice package
-    installed.  All updates are performed using `slice-update`.
+   Performs reinstallation.  Like restart, all processes are killed. Next, for
+   M-Lab managed slices, this means that the slice data directory
+   `$SLICERSYNCDIR` is preserved, then the filesystem deleted, a new filesystem
+   is created, the data directory restored, and the slice package installed.
+   All updates are performed using `slice-update`.
     
-`slicebase/etc/init.d/rsyncd`
+* `slicebase/etc/init.d/rsyncd`
     
-    An initscript to control the rsync daemon.  The rsync daemon provides
-    read-only access to the experiment logs stored in `$SLICERSYNCDIR`.  This is
-    how M-Lab collects data from experiments before publishing it in cloud
-    storage and importing it into BigQuery for analysis.
+   An initscript to control the rsync daemon.  The rsync daemon provides
+   read-only access to the experiment logs stored in `$SLICERSYNCDIR`.  This is
+   how M-Lab collects data from experiments before publishing it in cloud
+   storage and importing it into BigQuery for analysis.
 
-`slicebase/etc/init.d/slicectrl`
+* `slicebase/etc/init.d/slicectrl`
     
-    An initscript to wrap operation of the slice itself.  When calling `start`,
-    `stop`, or `initialize`, the initscript looks for slice-provided scripts in
-    `$SLICEHOME/init/` and executes the appropriate one.
+   An initscript to wrap operation of the slice itself.  When calling `start`,
+   `stop`, or `initialize`, the initscript looks for slice-provided scripts in
+   `$SLICEHOME/init/` and executes the appropriate one.
 
-    More information on these scripts can be found here: add-link.
+   More information on these scripts can be found here: add-link.
 
-`slicebase/mlab/slice-functions`
+* `slicebase/mlab/slice-functions`
 
-    This file is available for slice-provided scripts.  In particular it defines
-    several useful values and functions for configuration and operation.
+   This file is available for slice-provided scripts.  In particular it defines
+   several useful values and functions for configuration and operation.
 
-    More information on this can be found here: add-link.
+   More information on this can be found here: add-link.
