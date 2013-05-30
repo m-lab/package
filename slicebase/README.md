@@ -13,14 +13,14 @@ Support Scripts
 
 `slicebase/init/post-init`
 
-    Once the slice package is installed, `post-init` performs post installation
-    setup.  In particular, it will:
+   Once the slice package is installed, `post-init` performs post installation
+   setup.  In particular, it will:
 
-     * enable the `rsyslog` service using chkconfig.
-     * enable the `crond` service using chkconfig.
-     * configure `/etc/rsyncd.conf`
-     * enable the `rsyncd` service using chkconfig.
-     * enable the `slicectrl` service using chkconfig.
+   * enable the `rsyslog` service using chkconfig.
+   * enable the `crond` service using chkconfig.
+   * configure `/etc/rsyncd.conf`
+   * enable the `rsyncd` service using chkconfig.
+   * enable the `slicectrl` service using chkconfig.
 
 `slicebase/mlab/slicectrl-functions`
 
