@@ -1,16 +1,17 @@
 M-Lab Slicebase
 ===============
 
-The slicebase is a set of conventions and standard services for M-lab slices
-that are automatically bundled with slices packaged using the
+The slicebase is a set of standard services and conventions for M-lab slices.
+The files here are automatically bundled with slices packaged using the
 m-lab-tools/package module.
 
-The following outline the utility of each part.
+The following outline the utility of each part.  More details should be
+available in the comments of each file.
 
 Support Scripts
-===============
+---------------
 
- * `slicebase/init/post-init
+`slicebase/init/post-init`
 
     Once the slice package is installed, this script performs post installation
     initialization.  In particular, it will:
@@ -26,7 +27,7 @@ Support Scripts
     `slicectrl-functions` provides all the support logic for `slicectrl`.
 
 User Scripts and Commands
-=========================
+-------------------------
 
 The following commands are available to users.
 
