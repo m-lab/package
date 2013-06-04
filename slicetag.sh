@@ -49,6 +49,20 @@ elif [[ $command =~ "set" ]] ; then
     VERSION=$1
     RELEASE=$VERSION-$TAG.mlab
     settag $RELEASE
+elif [[ $command =~ "rm" ]] ; then
+    VERSION=$1
+    RELEASE=$VERSION
+    echo "WARNING: About to delete tag: $RELEASE"
+    echo -n "WARNING: Are you sure? (Y/n): "
+    read im_sure
+    if test -z "$im_sure" || test "$im_sure" = "Y" ; then
+        # NOTE: delete locally
+        git tag -d $RELEASE
+        # NOTE: delete on remote
+        git push --delete origin $RELEASE
+    fi
+elif [[ $command =~ "list" ]] ; then
+    git tag -l
 else
     echo "Usage: $0 <get|set> [version]"
     echo "i.e. $0 set 1.0"
