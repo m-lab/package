@@ -41,3 +41,16 @@ if test -f svn-submodules ; then
     done
 fi
 
+# also check for a list of tar archives
+if test -f tar-archives ; then
+    cat tar-archives | while read filename url ; do 
+        if ! test -f $filename ; then
+            echo "Downloading: $url"
+            wget -o $filename $url
+        fi
+        # NOTE: tar should detect compression automatically
+        if test -f $filename ; then
+            tar -C $SOURCE_DIR -xvf $filename
+        fi
+    done
+fi
