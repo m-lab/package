@@ -17,6 +17,7 @@ SOURCE_DIR=${SOURCE_DIR:-$PWD}
 cd $SOURCE_DIR
 
 set -e
+set -x
 
 # NOTE: check for dependencies
 for command in git svn rpmbuild m4 ; do
@@ -46,10 +47,11 @@ if test -f tar-archives ; then
     cat tar-archives | while read filename url ; do 
         if ! test -f $filename ; then
             echo "Downloading: $url"
-            wget -o $filename $url
+            wget -O $filename $url
         fi
         # NOTE: tar should detect compression automatically
         if test -f $filename ; then
+            echo "Unpacking: $filename"
             tar -C $SOURCE_DIR -xvf $filename
         fi
     done
