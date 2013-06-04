@@ -28,3 +28,8 @@ if test -f svn-submodules ; then
     cat svn-submodules
 fi
 
+if test -f tar-archives ; then
+    echo "TAR-archives:"
+    cat tar-archives
+fi
+
