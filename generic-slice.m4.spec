@@ -120,6 +120,10 @@ fi
 # NOTE: leave a bread-crumb to indicate that the package was installed.
 touch /etc/mlab/slice.installed
 
+# NOTE: enable yum-cron, 'start' only creates a file 
+chkconfig --level 345  yum-cron on
+service yum-cron start
+
 %preun
 # NOTE: stop experiment with slicectrl
 chkconfig --del rsyncd
