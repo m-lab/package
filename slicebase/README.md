@@ -6,7 +6,8 @@ The files here are automatically bundled with slices packaged using the
 m-lab-tools/package module.
 
 The following outline the utility of each part.  More details should be
-available in the comments of each file.
+available in the comments of each file. If you have additional questions, please
+contact mailto:support@measurementlab.net
 
 Support Scripts
 ---------------
