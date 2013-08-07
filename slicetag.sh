@@ -1,5 +1,18 @@
 #!/bin/bash
 
+function on_master () {
+
+    # identify if the current branch is a tag, or if not assume it is 'master'
+    local githash=`git rev-parse HEAD`
+    local tags=`git show-ref --tags | grep $githash | wc -l`
+
+    # if tags > 0, then we're in a tag, otherwise on 'master'
+    if test $tags -gt 0 ; then
+        return 1
+    fi
+    return 0
+}
+
 function settag () {
     local RELEASE=$1
 
@@ -40,7 +53,7 @@ TAG=$( git rev-list --all | wc -l )
 if [[ $command =~ "get" ]] ; then
     # Expect a tag to have been set previously.
     RELEASE=$( git describe --abbrev=0 --tags 2> /dev/null || : )
-    if [ -z "$RELEASE" ] ; then
+    if [ -z "$RELEASE" ] || on_master ; then
         # But, if there is not one, return 'master'
         RELEASE=master-$TAG.mlab
     fi
