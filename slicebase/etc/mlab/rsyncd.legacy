@@ -1,7 +1,8 @@
 # maps legacy rsync configuration from slicename to module name & port
 gt_partha        54321 shaperprobe
-iupui_ndt        7999  ndt-data
-iupui_npad       7999  NPAD.v1
-iupui_npad       7999  SideStream
+iupui_ndt        7999  ndt
+iupui_npad       7999  npad
+iupui_npad       7999  sidestream
 mlab_neubot      7999  neubot
 mpisws_broadband 7999  glasnost
+mlab_ooni        7999  ooni
