@@ -1,9 +1,14 @@
 #!/bin/bash
 
 if [ -e /vsys/slice_update.out ] ; then
-    cat /vsys/slice_update.out &
+    cat /vsys/slice_update.out &> /dev/null & disown
     echo "1" > /vsys/slice_update.in
 else
-    echo "Error: /vsys/slice_update.out missing."
+    if [[ $EUID -ne 0 ]] ; then
+        echo "Error: please run slice-update as root."
+        exit 1
+    fi
+    echo "Error: /vsys/slice_update.out appears to be missing."
     echo "Please report this to support@measurementlab.net"
+    exit 1
 fi
