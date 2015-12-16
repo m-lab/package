@@ -50,9 +50,10 @@ function kill_remaining () {
     if [ -f /var/run/$SLICENAME/pids.beforestart ] ; then
         for pid in `comm -23 <( sort /var/run/$SLICENAME/pids.afterstop ) \
                              <( sort /var/run/$SLICENAME/pids.beforestart )`; do
-            echo "STILL RUNNING: " `ps ax | grep $pid | grep -v grep` 1>&2
-            kill -$signal $pid 2> /dev/null
-            KILLED="TRUE"
+            echo "STILL RUNNING: " $(ps $pid) 1>&2
+            if kill -$signal $pid 2> /dev/null ; then
+                KILLED="TRUE"
+            fi
         done
     fi
     echo $KILLED
