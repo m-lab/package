@@ -35,6 +35,7 @@ function start_before_everything () {
 }
 
 function stop_after_everything () {
+    sleep 1
     KILLED=$( kill_remaining TERM )
     if [ -n "$KILLED" ] ; then
         sleep 3
@@ -45,13 +46,14 @@ function stop_after_everything () {
 function kill_remaining () {
     local signal=$1
     KILLED=
-    pgrep -v -f "slicectrl|rsync|rpm" > /var/run/$SLICENAME/pids.afterstop
+    pgrep -v -f "slicectrl|rsync|rpm|bash|login|/bin/su" > /var/run/$SLICENAME/pids.afterstop
     if [ -f /var/run/$SLICENAME/pids.beforestart ] ; then
         for pid in `comm -23 <( sort /var/run/$SLICENAME/pids.afterstop ) \
-                             <( sort /var/run/$SLICENAME/pids.beforestart )`; do 
-            echo "STILL RUNNING: " `ps ax | grep $pid`
-            kill -$signal $pid
-            KILLED="TRUE"
+                             <( sort /var/run/$SLICENAME/pids.beforestart )`; do
+            echo "STILL RUNNING: " $(ps $pid) 1>&2
+            if kill -$signal $pid 2> /dev/null ; then
+                KILLED="TRUE"
+            fi
         done
     fi
     echo $KILLED
