@@ -48,7 +48,7 @@ set -e
 command=$1
 shift || :
 
-TAG=$( date -u +"%s" ) 
+TAG=$( git log -1 --format=%ct ) 
 
 if [[ $command =~ "get" ]] ; then
     # Expect a tag to have been set previously.
