@@ -48,7 +48,7 @@ set -e
 command=$1
 shift || :
 
-TAG=$( git rev-list --all | wc -l ) 
+TAG=$( git log -1 --format=%ct ) 
 
 if [[ $command =~ "get" ]] ; then
     # Expect a tag to have been set previously.
