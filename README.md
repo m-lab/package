@@ -4,20 +4,20 @@ M-Lab Packaging Support
 This repository contains scripts to help build packages for experiments
 deployed to M-Lab.
 
-By convention new experiments receive a repository in the m-lab-tools
+By convention new experiments receive a repository in the m-lab
 organization on github.com.  Ownership of this repository is shared between
 M-Lab operators and the researcher writing the experiment.
 
-    https://github.com/m-lab-tools
+    https://github.com/m-lab
 
 If a new experiment is called 'example', then the repository would be named 
 
-    https://github.com/m-lab-tools/example-support
+    https://github.com/m-lab/example-support
 
 The example-support repository would contain a submodule references to this repository.
 
-    git clone https://github.com/m-lab-tools/example-support
-    git submodule add https://github.com/m-lab-tools/package
+    git clone https://github.com/m-lab/example-support
+    git submodule add https://github.com/m-lab/package
     git commit -a -m "add M-Lab 'package' as submodule of example-support"
     git push
 
@@ -76,7 +76,7 @@ However you can override them using environment variable.  Specifically:
     RPMBUILD -- the output of slicebuild.sh, default $PWD/build/
     TMPBUILD -- temporary output during rpm build, default $PWD/build/tmp
 
-  [1]: https://github.com/m-lab-tools/package/blob/master/templates/prepare.sh
+  [1]: https://github.com/m-lab/package/blob/master/templates/prepare.sh
   
 Development
 -----------
@@ -97,7 +97,7 @@ accommodations:
     - create a new user:
       * adduser <devfoo> 
     - checkout the appropriate support repo:
-      * git clone --recursive https://github.com/m-lab-tools/example-support
+      * git clone --recursive https://github.com/m-lab/example-support
     - build it using your slicename:
       * ./package/slicebuild.sh <slicename>
     - copy the resulting package to the second machine.
@@ -113,4 +113,4 @@ accommodations:
 
 Additional notes on the behavior of the slicebase system is [here][2].
 
-  [2]: https://github.com/m-lab-tools/package/tree/master/slicebase
+  [2]: https://github.com/m-lab/package/tree/master/slicebase
