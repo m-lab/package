@@ -1,0 +1,83 @@
+#!/bin/bash
+
+YUMCONF="yum.conf"
+CANARYCONF="yum.canary.conf"
+YUMREPOD="yum.slice.d"
+CANARYREPOD="yum.canary.d"
+
+if [ -s /etc/slicename ]; then
+    SLICENAME=$(cat /etc/slicename)
+else
+    echo "Error: /etc/slicename is either empty or doesn't exist."
+    exit 1
+fi
+
+if [[ $EUID -ne 0 ]] ; then
+    echo "Error: please run slice-canary as root."
+    exit 1
+fi
+
+if ! service slicectrl stop &> /dev/null; then
+    echo "Error: slicectrl failed to stop all slice services."
+    exit 1
+fi
+
+# Function to clean up temporary yum configs
+function cleanup {
+    rm -rf /tmp/$CANARYCONF /tmp/$CANARYREPOD
+}
+
+# Copy the regular production yum configurations to new "canary" versions that
+# we can use to upgrade the slice without actually modifying the production
+# versions.
+cp /etc/$YUMCONF /tmp/$CANARYCONF
+cp -a /etc/$YUMREPOD /tmp/$CANARYREPOD
+
+# Modify the "canary" yum configurations to point to the M-Lab staging yum
+# repository.
+sed -i "s/\/etc\/${YUMREPOD//\./\\.}/\/tmp\/${CANARYREPOD//\./\\.}/" \
+    /tmp/$CANARYCONF
+sed -i '/slicebase\.centos/ { N;N; s/production-centos6/staging-centos6/ }' \
+    "/tmp/${CANARYREPOD}/slice.repo"
+
+# See if there is a newer version available before proceeding. It seems that
+# yum returns with code 100 when there is in fact an update available. We clean
+# all the cache files in advance to be sure that we're dealing with fresh
+# metadata.
+echo "* Checking to see if an update is available in the staging repository."
+yum -q clean all
+yum -c /tmp/yum.canary.conf check-update $SLICENAME > /dev/null
+if [ $? -ne 100 ]; then
+    echo "A newer version of slice package is not available."
+    echo "Is a newer version installed in the staging yum repository?"
+    cleanup
+    exit 1
+fi
+
+# Record the old version number of the slice package.
+OLDVER=$(yum list installed | grep $SLICENAME | awk '{print $2}')
+
+# Remove the existing slice package.
+echo "* Removing existing slice package."
+rpm --quiet -e $SLICENAME
+
+# Recursively remove /etc/mlab so that the preinstall script of the new slice
+# package doesn't think the slice is already installed and try to invoke
+# slice-update instead of just installing the new package.
+rm -rf /etc/mlab
+
+# Install new slice package
+echo "* Installing new slice package."
+yum -q -y -c /tmp/$CANARYCONF install $SLICENAME > /dev/null
+
+if [ $? -eq 0 ]; then
+    # Record the new version number of the slice package.
+    NEWVER=$(yum list installed | grep $SLICENAME | awk '{print $2}')
+    service slicectrl start &> /dev/null
+    echo "* Successfully upgraded from $OLDVER to $NEWVER."
+    cleanup
+else
+    echo "Error: installation of the updated slice package failed."
+    cleanup
+    exit 1
+fi
