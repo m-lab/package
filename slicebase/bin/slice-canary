@@ -58,7 +58,7 @@ if [ $? -ne 100 ]; then
 fi
 
 # Record the old version number of the slice package.
-OLDVER=$(yum list installed | grep $SLICENAME | awk '{print $2}')
+OLDVER=$(rpm -q $SLICENAME)
 
 # Remove the existing slice package.
 echo "* Removing existing slice package."
@@ -75,7 +75,7 @@ yum -q -y -c /tmp/$CANARYCONF install $SLICENAME > /dev/null
 
 if [ $? -eq 0 ]; then
     # Record the new version number of the slice package.
-    NEWVER=$(yum list installed | grep $SLICENAME | awk '{print $2}')
+	NEWVER=$(rpm -q $SLICENAME)
     service slicectrl start &> /dev/null
     echo "* Successfully upgraded from $OLDVER to $NEWVER."
     cleanup
