@@ -33,8 +33,10 @@ function cleanup {
 cp /etc/$YUMCONF /tmp/$CANARYCONF
 cp -a /etc/$YUMREPOD /tmp/$CANARYREPOD
 
-# Modify the "canary" yum configuration to point to the "canary" repos directory
-sed -i "s/\/etc\/${YUMREPOD//\./\\.}/\/tmp\/${CANARYREPOD//\./\\.}/" \
+# Modify the "canary" yum configuration to point to the "canary" repos
+# directory.  The variable substitution below simply replaces every instance of
+# '.' with '\.' in the variable $YUMREPOD.
+sed -i "s|/etc/${YUMREPOD//\./\\.}|/tmp/${CANARYREPOD}|" \
     /tmp/$CANARYCONF
 # Locate the [slicebase.centos] block, then change the URL path from production
 # to staging. The 'N;N;' syntax loads the next two lines after the pattern match
