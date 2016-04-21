@@ -33,12 +33,15 @@ function cleanup {
 cp /etc/$YUMCONF /tmp/$CANARYCONF
 cp -a /etc/$YUMREPOD /tmp/$CANARYREPOD
 
-# Modify the "canary" yum configurations to point to the M-Lab staging yum
-# repository.
+# Modify the "canary" yum configuration to point to the "canary" repos directory
 sed -i "s/\/etc\/${YUMREPOD//\./\\.}/\/tmp\/${CANARYREPOD//\./\\.}/" \
     /tmp/$CANARYCONF
+# Locate the [slicebase.centos] block, then change the URL path from production
+# to staging. The 'N;N;' syntax loads the next two lines after the pattern match
+# into the buffer, which should include the line containing the repo URL, so
+# that the substitution pattern can operate on the URL.
 sed -i '/slicebase\.centos/ { N;N; s/production-centos6/staging-centos6/ }' \
-    "/tmp/${CANARYREPOD}/slice.repo"
+    /tmp/${CANARYREPOD}/slice.repo
 
 # See if there is a newer version available before proceeding. It seems that
 # yum returns with code 100 when there is in fact an update available. We clean
