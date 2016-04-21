@@ -46,7 +46,7 @@ sed -i '/slicebase\.centos/ { N;N; s/production-centos6/staging-centos6/ }' \
 # metadata.
 echo "* Checking to see if an update is available in the staging repository."
 yum -q clean all
-yum -c /tmp/yum.canary.conf check-update $SLICENAME > /dev/null
+yum -c /tmp/${CANARYCONF} check-update $SLICENAME > /dev/null
 if [ $? -ne 100 ]; then
     echo "A newer version of slice package is not available."
     echo "Is a newer version installed in the staging yum repository?"
