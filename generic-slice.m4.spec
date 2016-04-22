@@ -63,6 +63,7 @@ install -D -m 0755 slicebase/etc/init.d/rsyncd    $RPM_BUILD_ROOT/etc/init.d/rsy
 
 install -D -m 0755 slicebase/bin/slice-update     $RPM_BUILD_ROOT/usr/bin/slice-update
 install -D -m 0755 slicebase/bin/slice-restart    $RPM_BUILD_ROOT/usr/bin/slice-restart
+install -D -m 0755 slicebase/bin/slice-canary     $RPM_BUILD_ROOT/usr/bin/slice-canary
 
 # NOTE: this is an m4 macro 
 include(SLICEinstall)
