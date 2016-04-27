@@ -87,6 +87,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) /etc/init.d/rsyncd 
 %attr(0755,root,root) /usr/bin/slice-update
 %attr(0755,root,root) /usr/bin/slice-restart
+%attr(0755,root,root) /usr/bin/slice-canary
 
 # NOTE: this is an m4 macro to include extra files
 include(SLICEfiles)
