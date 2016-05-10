@@ -46,7 +46,11 @@ function stop_after_everything () {
 function kill_remaining () {
     local signal=$1
     KILLED=
-    pgrep -v -f "slicectrl|rsync|rpm|bash|login|/bin/su" > /var/run/$SLICENAME/pids.afterstop
+    # TODO(soltesz): reconsider how to implement `kill_remaining` so that this
+    # whitelist is not dysfunctional.
+    # Adding 'python' so that ansible can run 'service slicectrl restart'.
+    # Adding 'crond' so that cron can never be stopped.
+    pgrep -v -f "python|crond|slicectrl|rsync|rpm|bash|login|/bin/su" > /var/run/$SLICENAME/pids.afterstop
     if [ -f /var/run/$SLICENAME/pids.beforestart ] ; then
         for pid in `comm -23 <( sort /var/run/$SLICENAME/pids.afterstop ) \
                              <( sort /var/run/$SLICENAME/pids.beforestart )`; do
