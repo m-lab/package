@@ -55,8 +55,8 @@ if [[ $command =~ "get" ]] ; then
     # Expect a tag to have been set previously.
     RELEASE=$( git describe --abbrev=0 --tags 2> /dev/null || : )
     if [ -z "$RELEASE" ] || on_master ; then
-        # But, if there is not one, return 'master'
-        RELEASE=master-$TAG.mlab
+        # But, if there is not one, return the last-commit date tag as version.
+        RELEASE=$TAG-0.mlab
     fi
     echo $RELEASE
 elif [[ $command =~ "set" ]] ; then
