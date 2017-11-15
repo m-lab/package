@@ -34,35 +34,6 @@ function start_before_everything () {
     pgrep -f ".*" > /var/run/$SLICENAME/pids.beforestart
 }
 
-function stop_after_everything () {
-    sleep 1
-    KILLED=$( kill_remaining TERM )
-    if [ -n "$KILLED" ] ; then
-        sleep 3
-        KILLED=$( kill_remaining KILL )
-    fi
-}
-
-function kill_remaining () {
-    local signal=$1
-    KILLED=
-    # TODO(soltesz): reconsider how to implement `kill_remaining` so that this
-    # whitelist is not dysfunctional.
-    # Adding 'python' so that ansible can run 'service slicectrl restart'.
-    # Adding 'crond' so that cron can never be stopped.
-    pgrep -v -f "python|crond|slicectrl|rsync|rpm|bash|login|/bin/su" > /var/run/$SLICENAME/pids.afterstop
-    if [ -f /var/run/$SLICENAME/pids.beforestart ] ; then
-        for pid in `comm -23 <( sort /var/run/$SLICENAME/pids.afterstop ) \
-                             <( sort /var/run/$SLICENAME/pids.beforestart )`; do
-            echo "STILL RUNNING: " $(ps $pid) 1>&2
-            if kill -$signal $pid 2> /dev/null ; then
-                KILLED="TRUE"
-            fi
-        done
-    fi
-    echo $KILLED
-}
-
 function initialize_slice () {
     if find_and_exec_slice initialize ; then
         touch /etc/mlab/sliceinit.ok
@@ -92,7 +63,6 @@ function start_slice () {
 
 function stop_slice () {
     find_and_exec_slice stop
-    stop_after_everything
 }
 
 function status_slice () {
