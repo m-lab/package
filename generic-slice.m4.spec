@@ -29,7 +29,7 @@ Release: %{releasetag}
 # this is for centos6 only, package names change for future distros.
 Requires: cronie
 Requires: crontabs
-Requires: yum-cron
+# Requires: yum-cron
 
 License: Apache License
 Group: System Environment/Base
@@ -123,8 +123,8 @@ fi
 touch /etc/mlab/slice.installed
 
 # NOTE: enable yum-cron, 'start' only creates a file 
-chkconfig --level 345  yum-cron on
-service yum-cron start
+# chkconfig --level 345  yum-cron on
+# service yum-cron start
 
 %preun
 # NOTE: stop experiment with slicectrl
